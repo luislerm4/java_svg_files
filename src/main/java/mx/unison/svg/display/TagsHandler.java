@@ -96,6 +96,14 @@ public class TagsHandler extends DefaultHandler {
             copyAttributes(atts, currentShape);
             shapes.add(currentShape);
         }
+        if (tagName.equals("rect")) {
+            LOG.info("Starting element " + tagName);
+            currentShape = new Properties();
+            currentShape.put("type", "rect");
+
+            copyAttributes(atts, currentShape);
+            shapes.add(currentShape);
+        }
     }
 
     private void copyAttributes(Attributes atts, Properties myShape) {

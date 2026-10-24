@@ -262,6 +262,89 @@ public class SVGDiagram extends JComponent {
                     }
                 }
             }
+            if (type.equals("rect")) {
+                String xStr = shape.getProperty("x");
+                String yStr = shape.getProperty("y");
+                String wStr = shape.getProperty("width");
+                String hStr = shape.getProperty("height");
+                String fill = shape.getProperty("fill");
+                String stroke = shape.getProperty("stroke");
+                String strokeWidthStr = shape.getProperty("stroke-width");
+                String rxStr = shape.getProperty("rx");
+                String ryStr = shape.getProperty("ry");
+
+                if (strokeWidthStr != null) {
+                    try {
+                        float strokeWidth = Float.parseFloat(strokeWidthStr);
+                        currentStroke = new BasicStroke(strokeWidth);
+                        g2d.setStroke(currentStroke);
+                    } catch (NumberFormatException e) {
+                        LOG.warning("Invalid stroke width: " + strokeWidthStr);
+                        currentStroke = new BasicStroke(1.0f);
+                        g2d.setStroke(currentStroke);
+                    }
+                }
+
+                if (xStr != null && yStr != null && wStr != null && hStr != null) {
+                    try {
+                        int x = Integer.parseInt(xStr);
+                        int y = Integer.parseInt(yStr);
+                        int width = Integer.parseInt(wStr);
+                        int height = Integer.parseInt(hStr);
+
+
+                        if (width < 0 || height < 0) {
+                            LOG.warning("Invalid rectangle dimensions: width and height must be non-negative");
+                            return;
+                        }
+
+                        int rx = rxStr != null ? Integer.parseInt(rxStr) : 0;
+                        int ry = ryStr != null ? Integer.parseInt(ryStr) : 0;
+                        if (rxStr != null && ryStr == null) ry = rx;
+                        if (ryStr != null && rxStr == null) rx = ry;
+
+
+                        if (fill != null && !fill.equalsIgnoreCase("none")) {
+                            try {
+                                fillColor = Color.decode(fill);
+                            } catch (NumberFormatException e) {
+                                fillColor = parseColor(fill, 1.0f);
+                            }
+                            g2d.setColor(fillColor);
+                            if (rx > 0 || ry > 0) {
+                                g2d.fillRoundRect(x, y, width, height, rx * 2, ry * 2);
+                            } else {
+                                g2d.fillRect(x, y, width, height);
+                            }
+                        }
+
+
+                        if (stroke != null && !stroke.equalsIgnoreCase("none")) {
+                            try {
+                                strokeColor = Color.decode(stroke);
+                            } catch (NumberFormatException e) {
+                                strokeColor = parseColor(stroke, 1.0f);
+                            }
+                            g2d.setColor(strokeColor);
+                            if (rx > 0 || ry > 0) {
+                                g2d.drawRoundRect(x, y, width, height, rx * 2, ry * 2);
+                            } else {
+                                g2d.drawRect(x, y, width, height);
+                            }
+                        } else if (fill == null) {
+                            g2d.setColor(strokeColor);
+                            if (rx > 0 || ry > 0) {
+                                g2d.drawRoundRect(x, y, width, height, rx * 2, ry * 2);
+                            } else {
+                                g2d.drawRect(x, y, width, height);
+                            }
+                        }
+
+                    } catch (NumberFormatException e) {
+                        LOG.warning("Error parsing rectangle attributes: " + e.getMessage());
+                    }
+                }
+            }
 
         }
 
