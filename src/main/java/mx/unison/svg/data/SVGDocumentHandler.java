@@ -1,20 +1,31 @@
 package mx.unison.svg.data;
 
+import mx.unison.svg.util.Polyline;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+
 public class SVGDocumentHandler extends DefaultHandler {
 
     private boolean inTextElement = false;
+    private List<Object> figures = new ArrayList<>(); // Lista donde se guardarán las figuras leídas
 
     public SVGDocumentHandler() {
         super();
     }
 
+    public List<Object> getFigures() {
+        return figures;
+    }
+
     @Override
     public void startDocument() throws SAXException {
         super.startDocument();
+        figures.clear();
     }
 
     @Override
@@ -63,6 +74,20 @@ public class SVGDocumentHandler extends DefaultHandler {
             String y = attributes.getValue("y");
             System.out.printf("Text\n\tPosition: (%s, %s)\n", x, y);
         }
+        if(tagName.equals("polyline")) {
+            String points = attributes.getValue("points");
+            String strokeWidthStr = attributes.getValue("stroke-width");
+
+            Color stroke = Color.BLACK;
+            Color fill = null;
+            float strokeWidth = strokeWidthStr != null ? Float.parseFloat(strokeWidthStr) : 2.0f;
+
+            Polyline polyline = new Polyline(points, stroke, fill, strokeWidth);
+
+            figures.add(polyline);
+
+            System.out.printf("Polyline creada y agregada con puntos: %s\n", points);
+        }
     }
 
     @Override
@@ -84,7 +109,7 @@ public class SVGDocumentHandler extends DefaultHandler {
         } else {
             tagName = localName;
         }
-          if(tagName.equals("text")) {
+        if(tagName.equals("text")) {
             inTextElement = false;
         }
     }

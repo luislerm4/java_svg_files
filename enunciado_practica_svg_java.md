@@ -29,12 +29,12 @@ Antes de modificar el proyecto, examine las clases que intervienen en el procesa
 
 Identifique:
 
-1. Cómo se carga y procesa un archivo SVG.
-2. Qué responsabilidades tiene el analizador SAX.
-3. Cómo se identifican los elementos y sus atributos.
-4. Cómo se almacenan los datos geométricos.
-5. Cómo se realiza el dibujo utilizando Java 2D.
-6. Qué clases deben modificarse o extenderse para incorporar nuevos elementos.
+1. Cómo se carga y procesa un archivo SVG. El programa arranca desde el Main y le manda el archivo SVG a una herramienta de Java (el analizador SAX) para que lo empiece a leer.
+2. Qué responsabilidades tiene el analizador SAX. Es básicamente la clase SVGDocumentHandler. Su trabajo es leer el archivo XML paso a paso, ver cuándo empieza y termina cada etiqueta, y cachar sus datos.
+3. Cómo se identifican los elementos y sus atributos. El mismo SVGDocumentHandler revisa cómo se llama la etiqueta (si es un círculo, línea, rectángulo, etc.) y le saca las medidas o coordenadas que trae escritas.
+4. Cómo se almacenan los datos geométricos. Se guardan en las clases que están en la carpeta util (Circle, Line, Rect). De ahí se juntan en una lista dentro de SVGDiagram para tenerlas ordenadas.
+5. Cómo se realiza el dibujo utilizando Java 2D. El DisplayDiagram agarra esa lista de figuras que guardamos, las procesa con las herramientas de Java 2D y las pinta en la pantalla.
+6. Qué clases deben modificarse o extenderse para incorporar nuevos elementos. Nomás se crea la clase de la figura nueva en la carpeta util, y luego se mete al SVGDocumentHandler para enseñarle a leer la nueva etiqueta del archivo SVG.
 
 ### Actividad 2. Implementación del elemento `polyline`
 
