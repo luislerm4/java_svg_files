@@ -204,6 +204,64 @@ public class SVGDiagram extends JComponent {
 
                 }
             }
+            if (type.equals("polyline")) {
+                String pointsStr = shape.getProperty("points");
+                String stroke = shape.getProperty("stroke");
+                String fill = shape.getProperty("fill");
+                String strokeWidthStr = shape.getProperty("stroke-width");
+
+                if (strokeWidthStr != null) {
+                    try {
+                        float strokeWidth = Float.parseFloat(strokeWidthStr);
+                        currentStroke = new BasicStroke(strokeWidth);
+                        g2d.setStroke(currentStroke);
+                    } catch (NumberFormatException e) {
+                        LOG.warning("Invalid stroke width: " + strokeWidthStr);
+                        currentStroke = new BasicStroke(1.0f);
+                        g2d.setStroke(currentStroke);
+                    }
+                }
+
+                if (pointsStr != null) {
+                    String[] tokens = pointsStr.trim().split("[,\\s]+");
+                    int nPoints = tokens.length / 2;
+                    int[] xPoints = new int[nPoints];
+                    int[] yPoints = new int[nPoints];
+
+                    try {
+                        for (int i = 0; i < nPoints; i++) {
+                            xPoints[i] = Integer.parseInt(tokens[2 * i]);
+                            yPoints[i] = Integer.parseInt(tokens[2 * i + 1]);
+                        }
+
+                        if (fill != null && !fill.equalsIgnoreCase("none")) {
+                            try {
+                                fillColor = Color.decode(fill);
+                            } catch (NumberFormatException e) {
+                                fillColor = parseColor(fill, 1.0f);
+                            }
+                            g2d.setColor(fillColor);
+                            g2d.fillPolygon(xPoints, yPoints, nPoints);
+                        }
+
+                        if (stroke != null && !stroke.equalsIgnoreCase("none")) {
+                            try {
+                                strokeColor = Color.decode(stroke);
+                            } catch (NumberFormatException e) {
+                                strokeColor = parseColor(stroke, 1.0f);
+                            }
+                            g2d.setColor(strokeColor);
+                            g2d.drawPolyline(xPoints, yPoints, nPoints);
+                        } else if (fill == null) {
+                            g2d.setColor(strokeColor);
+                            g2d.drawPolyline(xPoints, yPoints, nPoints);
+                        }
+
+                    } catch (Exception e) {
+                        LOG.warning("Error parsing polyline points: " + pointsStr);
+                    }
+                }
+            }
 
         }
 

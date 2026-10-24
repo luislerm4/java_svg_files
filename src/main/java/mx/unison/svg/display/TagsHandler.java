@@ -11,7 +11,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class TagsHandler  extends DefaultHandler {
+public class TagsHandler extends DefaultHandler {
     public static final Logger LOG = Logger.getLogger( TagsHandler.class.getName() );
 
     private ArrayList<Properties> shapes;
@@ -43,7 +43,7 @@ public class TagsHandler  extends DefaultHandler {
 
     @Override
     public void startPrefixMapping(String prefix, String uri) throws SAXException {
-            super.startPrefixMapping(prefix, uri);
+        super.startPrefixMapping(prefix, uri);
     }
 
     @Override
@@ -79,6 +79,23 @@ public class TagsHandler  extends DefaultHandler {
             shapes.add(currentShape);
         }
 
+        if  (tagName.equals("rect") ) {
+            LOG.info("Starting element " + tagName);
+            currentShape = new Properties();
+            currentShape.put("type", "rect");
+
+            copyAttributes(atts, currentShape);
+            shapes.add(currentShape);
+        }
+
+        if  (tagName.equals("polyline") ) {
+            LOG.info("Starting element " + tagName);
+            currentShape = new Properties();
+            currentShape.put("type", "polyline");
+
+            copyAttributes(atts, currentShape);
+            shapes.add(currentShape);
+        }
     }
 
     private void copyAttributes(Attributes atts, Properties myShape) {
