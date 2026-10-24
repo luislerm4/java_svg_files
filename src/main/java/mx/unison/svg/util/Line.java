@@ -10,6 +10,8 @@ public class Line {
     public Line() {
         super();
     }
+    public double getX2() { return x2; }
+    public void setX2(double x2) { this.x2 = x2; }
 
     public Line(double x1, double y1, double x2, double y2) {
         this.x1 = x1;
@@ -21,7 +23,7 @@ public class Line {
     public double lenght() {
         return Math.sqrt( Math.pow( x2-x1,2.0) +  Math.pow( y2-y1,2.0) );
     }
-
+    public double length() { return lenght(); }
     public double m() {
         double pendiente = 0.0;
 
